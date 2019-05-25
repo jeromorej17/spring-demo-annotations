@@ -2,6 +2,7 @@ package com.parkview.springdemo;
 
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,7 +22,7 @@ public class FileFortuneService implements FortuneService {
         String fortune = "";
 
         try{
-            data = readFile(file.getPath());
+            readFile();
             int index = myRandom.nextInt(data.length);
             fortune = data[index];
         }
@@ -32,9 +33,11 @@ public class FileFortuneService implements FortuneService {
         return fortune;
     }
 
-    private String[] readFile(String filename) throws IOException {
-         List<String> fortunes = Files.readAllLines(Paths.get(filename));
-         return fortunes.toArray(new String[fortunes.size()]);
+    @PostConstruct
+    private void readFile() throws IOException {
+        System.out.println(">> FileFortuneService: inside readFile() - an @PostConstruct annotated method ...");
+         List<String> fortunes = Files.readAllLines(Paths.get(file.getPath()));
+         data = fortunes.toArray(new String[fortunes.size()]);
     }
 
 }

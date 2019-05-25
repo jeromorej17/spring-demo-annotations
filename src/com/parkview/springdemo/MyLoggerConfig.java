@@ -1,18 +1,25 @@
 package com.parkview.springdemo;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-
+@Configuration
+@PropertySource("classpath:mylogger.properties")
 public class MyLoggerConfig {
 
+    @Value("${root.logger.level}")
     private String rootLoggerLevel;
+
+    @Value("${printed.logger.level}")
     private String printedLoggerLevel;
 
     public void setRootLoggerLevel(String rootLoggerLevel){
@@ -23,6 +30,7 @@ public class MyLoggerConfig {
         this.printedLoggerLevel = printedLoggerLevel;
     }
 
+    @PostConstruct
     public void initLogger(){
 
         // parse level
@@ -38,7 +46,7 @@ public class MyLoggerConfig {
         // set root logging level
         loggerParent.setLevel(rootLevel);
 
-        // set up console logger
+        // set up console logger handler
         ConsoleHandler consoleHandler = new ConsoleHandler();
         consoleHandler.setLevel(printedLevel);
         consoleHandler.setFormatter(new SimpleFormatter());
